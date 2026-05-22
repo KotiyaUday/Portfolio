@@ -4,6 +4,24 @@ import { getSkills, type Skill } from "@/lib/firestore";
 import * as SiIcons from "react-icons/si";
 import { Layers } from "lucide-react";
 
+const fallbackSkills: Omit<Skill, "id">[] = [
+  { name: "Dart", category: "Flutter Development", icon: "SiDart", proficiency: 90, order: 1 },
+  { name: "Flutter", category: "Flutter Development", icon: "SiFlutter", proficiency: 88, order: 2 },
+  { name: "Firebase", category: "Flutter Development", icon: "SiFirebase", proficiency: 85, order: 3 },
+  { name: "JavaScript", category: "Programming Languages", icon: "SiJavascript", proficiency: 82, order: 4 },
+  { name: "Python", category: "Programming Languages", icon: "SiPython", proficiency: 78, order: 5 },
+  { name: "C++", category: "Programming Languages", icon: "SiCplusplus", proficiency: 75, order: 6 },
+  { name: "React.js", category: "Web Development", icon: "SiReact", proficiency: 80, order: 7 },
+  { name: "Node.js", category: "Web Development", icon: "SiNodedotjs", proficiency: 75, order: 8 },
+  { name: "Express.js", category: "Web Development", icon: "SiExpress", proficiency: 72, order: 9 },
+  { name: "MongoDB", category: "Database", icon: "SiMongodb", proficiency: 78, order: 10 },
+  { name: "MySQL", category: "Database", icon: "SiMysql", proficiency: 74, order: 11 },
+  { name: "Git", category: "Tools", icon: "SiGit", proficiency: 85, order: 12 },
+  { name: "VS Code", category: "Tools", icon: "SiVisualstudiocode", proficiency: 90, order: 13 },
+  { name: "TensorFlow", category: "AI/ML", icon: "SiTensorflow", proficiency: 60, order: 14 },
+  { name: "Pandas", category: "AI/ML", icon: "SiPandas", proficiency: 65, order: 15 },
+];
+
 const categoryColors: Record<string, string> = {
   "Flutter Development": "from-blue-500 to-cyan-400",
   "Programming Languages": "from-yellow-500 to-orange-400",
@@ -37,8 +55,12 @@ export default function Skills() {
 
   useEffect(() => {
     getSkills()
-      .then(setSkills)
-      .catch(console.error)
+      .then((data) => {
+        setSkills(data.length > 0 ? data : fallbackSkills.map((s, i) => ({ ...s, id: `fallback-${i}` })));
+      })
+      .catch(() => {
+        setSkills(fallbackSkills.map((s, i) => ({ ...s, id: `fallback-${i}` })));
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -63,7 +85,6 @@ export default function Skills() {
           <div className="w-16 h-1 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto mt-4 rounded-full" />
         </motion.div>
 
-        {/* Category filter */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}

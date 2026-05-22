@@ -3,6 +3,17 @@ import { motion, useInView } from "framer-motion";
 import { getExperience, type Experience } from "@/lib/firestore";
 import { Briefcase, Calendar, ChevronRight } from "lucide-react";
 
+const fallbackExperience: Omit<Experience, "id">[] = [
+  {
+    role: "Flutter Developer Intern",
+    company: "Tech Company",
+    duration: "2024",
+    description: "Worked on Flutter mobile application development, UI improvements, and API integration using Dart and Material Design. Built responsive layouts and integrated RESTful APIs for real-time data sync.",
+    technologies: ["Flutter", "Dart", "Firebase", "REST API"],
+    order: 1,
+  },
+];
+
 export default function ExperienceSection() {
   const [experiences, setExperiences] = useState<Experience[]>([]);
   const [loading, setLoading] = useState(true);
@@ -11,8 +22,12 @@ export default function ExperienceSection() {
 
   useEffect(() => {
     getExperience()
-      .then(setExperiences)
-      .catch(console.error)
+      .then((data) => {
+        setExperiences(data.length > 0 ? data : fallbackExperience.map((e, i) => ({ ...e, id: `fallback-${i}` })));
+      })
+      .catch(() => {
+        setExperiences(fallbackExperience.map((e, i) => ({ ...e, id: `fallback-${i}` })));
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -42,9 +57,7 @@ export default function ExperienceSection() {
           </div>
         ) : (
           <div className="relative">
-            {/* Timeline line */}
             <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-gradient-to-b from-blue-500 via-purple-500 to-transparent hidden sm:block" />
-
             <div className="space-y-8">
               {experiences.map((exp, i) => (
                 <motion.div
@@ -55,7 +68,6 @@ export default function ExperienceSection() {
                   className="relative sm:pl-16"
                   data-testid={`card-experience-${exp.id}`}
                 >
-                  {/* Timeline dot */}
                   <div className="hidden sm:flex absolute left-0 top-6 w-12 h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl items-center justify-center shadow-lg shadow-blue-500/20 z-10">
                     <Briefcase className="w-5 h-5 text-white" />
                   </div>
@@ -89,13 +101,6 @@ export default function ExperienceSection() {
                 </motion.div>
               ))}
             </div>
-          </div>
-        )}
-
-        {!loading && experiences.length === 0 && (
-          <div className="text-center py-16 text-slate-500">
-            <Briefcase className="w-12 h-12 mx-auto mb-4 opacity-30" />
-            <p>No experience entries yet.</p>
           </div>
         )}
       </div>

@@ -3,6 +3,23 @@ import { motion, useInView } from "framer-motion";
 import { getCertifications, type Certification } from "@/lib/firestore";
 import { Award, Calendar, ExternalLink } from "lucide-react";
 
+const fallbackCertifications: Omit<Certification, "id">[] = [
+  {
+    title: "Finishing School Training Program",
+    issuer: "Knowledge Consortium of Gujarat (KCG), Government of Gujarat",
+    date: "2024",
+    credentialUrl: "",
+    order: 1,
+  },
+  {
+    title: "Flutter & Dart - The Complete Guide",
+    issuer: "Udemy",
+    date: "2023",
+    credentialUrl: "",
+    order: 2,
+  },
+];
+
 export default function Certifications() {
   const [certs, setCerts] = useState<Certification[]>([]);
   const [loading, setLoading] = useState(true);
@@ -11,8 +28,12 @@ export default function Certifications() {
 
   useEffect(() => {
     getCertifications()
-      .then(setCerts)
-      .catch(console.error)
+      .then((data) => {
+        setCerts(data.length > 0 ? data : fallbackCertifications.map((c, i) => ({ ...c, id: `fallback-${i}` })));
+      })
+      .catch(() => {
+        setCerts(fallbackCertifications.map((c, i) => ({ ...c, id: `fallback-${i}` })));
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -80,13 +101,6 @@ export default function Certifications() {
                 </div>
               </motion.div>
             ))}
-          </div>
-        )}
-
-        {!loading && certs.length === 0 && (
-          <div className="text-center py-16 text-slate-500">
-            <Award className="w-12 h-12 mx-auto mb-4 opacity-30" />
-            <p>No certifications yet.</p>
           </div>
         )}
       </div>

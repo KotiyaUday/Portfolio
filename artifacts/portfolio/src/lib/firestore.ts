@@ -58,12 +58,23 @@ export type Social = {
   icon: string;
 };
 
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error("Firestore timeout")), ms)
+    ),
+  ]);
+}
+
 async function getCollection<T>(col: string): Promise<T[]> {
-  const q = query(collection(db, col), orderBy("order", "asc"));
-  const snap = await getDocs(q).catch(async () => {
-    return getDocs(collection(db, col));
-  });
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() } as T));
+  try {
+    const q = query(collection(db, col), orderBy("order", "asc"));
+    const snap = await withTimeout(getDocs(q), 2000);
+    return snap.docs.map((d) => ({ id: d.id, ...d.data() } as T));
+  } catch {
+    return [];
+  }
 }
 
 export const getProjects = () => getCollection<Project>("projects");

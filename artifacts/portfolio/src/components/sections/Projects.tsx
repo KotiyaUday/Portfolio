@@ -3,6 +3,39 @@ import { motion, useInView, AnimatePresence } from "framer-motion";
 import { getProjects, type Project } from "@/lib/firestore";
 import { Github, ExternalLink, Star, FolderOpen } from "lucide-react";
 
+const fallbackProjects: Omit<Project, "id">[] = [
+  {
+    title: "Crack DDCET",
+    description: "A comprehensive exam preparation app for DDCET aspirants with topic-wise practice questions, mock tests, and performance analytics to track progress.",
+    image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&auto=format&fit=crop",
+    technologies: ["Flutter", "Firebase", "Dart", "Firestore"],
+    githubUrl: "https://github.com/udaykotiya",
+    liveUrl: "",
+    featured: true,
+    order: 1,
+  },
+  {
+    title: "Headlines Hub",
+    description: "A modern news aggregator app that fetches real-time headlines across categories with offline reading, bookmarks, and a clean reader mode.",
+    image: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&auto=format&fit=crop",
+    technologies: ["Flutter", "REST API", "Dart", "Provider"],
+    githubUrl: "https://github.com/udaykotiya",
+    liveUrl: "",
+    featured: true,
+    order: 2,
+  },
+  {
+    title: "Lost & Found Hub",
+    description: "A community platform to report lost items and find them back. Features real-time notifications, image upload, location tagging, and chat.",
+    image: "https://images.unsplash.com/photo-1586892478382-8e64fc0eefca?w=800&auto=format&fit=crop",
+    technologies: ["Flutter", "Firebase", "Firestore", "Cloud Storage"],
+    githubUrl: "https://github.com/udaykotiya",
+    liveUrl: "",
+    featured: true,
+    order: 3,
+  },
+];
+
 export default function Projects() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
@@ -12,8 +45,12 @@ export default function Projects() {
 
   useEffect(() => {
     getProjects()
-      .then(setProjects)
-      .catch(console.error)
+      .then((data) => {
+        setProjects(data.length > 0 ? data : fallbackProjects.map((p, i) => ({ ...p, id: `fallback-${i}` })));
+      })
+      .catch(() => {
+        setProjects(fallbackProjects.map((p, i) => ({ ...p, id: `fallback-${i}` })));
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -37,7 +74,6 @@ export default function Projects() {
           <div className="w-16 h-1 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto mt-4 rounded-full" />
         </motion.div>
 
-        {/* Filter */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -84,7 +120,6 @@ export default function Projects() {
                   className="group relative bg-[#1E293B] rounded-2xl overflow-hidden border border-slate-700/50 hover:border-blue-500/40 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/10"
                   data-testid={`card-project-${project.id}`}
                 >
-                  {/* Image */}
                   <div className="relative overflow-hidden h-48">
                     <img
                       src={project.image || "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop"}
@@ -98,7 +133,6 @@ export default function Projects() {
                         Featured
                       </div>
                     )}
-                    {/* Hover overlay with buttons */}
                     <div className="absolute inset-0 bg-[#0F172A]/80 backdrop-blur-sm flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-all duration-300">
                       {project.githubUrl && (
                         <a
@@ -127,7 +161,6 @@ export default function Projects() {
                     </div>
                   </div>
 
-                  {/* Content */}
                   <div className="p-5">
                     <h3 className="text-white font-bold text-lg mb-2 group-hover:text-blue-400 transition-colors">
                       {project.title}
