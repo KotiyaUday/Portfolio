@@ -1,0 +1,169 @@
+Create a modern, production-level full-stack developer portfolio website for "Uday Kotiya" using React.js, Tailwind CSS, Firebase Firestore, Firebase Authentication, and Framer Motion animations.
+
+The website must be fully dynamic and connected to Firebase Firestore database. All portfolio content should load dynamically from the database so that changing database data automatically updates the website without modifying frontend code.
+
+IMPORTANT REQUIREMENTS:
+- Use React.js + Tailwind CSS
+- Use Firebase Firestore as database
+- Use Firebase Authentication for Admin Login
+- Use Framer Motion for smooth animations
+- Fully responsive for mobile, tablet, and desktop
+- Modern, clean, minimal, elegant UI
+- Professional developer portfolio design
+- Deploy-ready structure
+- Use reusable React components
+- Add proper folder structure and clean code
+
+COLOR THEME:
+- Primary Background: #0F172A
+- Secondary Background: #1E293B
+- Accent Color: #3B82F6
+- Secondary Accent: #8B5CF6
+- Text Primary: #F8FAFC
+- Text Secondary: #CBD5E1
+
+TYPOGRAPHY:
+- Use modern fonts like Inter or Poppins
+- Clean spacing and hierarchy
+- Smooth hover animations
+- Rounded cards and glassmorphism effects
+
+WEBSITE SECTIONS:
+
+1. HERO SECTION
+- Name: Uday Kotiya
+- Role: Flutter Developer | MERN Stack Developer | AI/ML Learner
+- Short intro:
+  "Computer Engineering student passionate about Flutter development, web technologies, and AI/ML. Building practical applications and modern digital experiences."
+- Buttons:
+  - Download Resume
+  - Contact Me
+- Social Links:
+  - GitHub
+  - LinkedIn
+  - Email
+- Add animated background effects
+
+2. ABOUT SECTION
+- Show detailed professional introduction
+- Include education:
+  Government Engineering College Rajkot
+- Include current interests:
+  Flutter Development, Firebase, MERN Stack, Data Science, AI/ML
+
+3. SKILLS SECTION (Dynamic from Firebase)
+Display skills dynamically from Firestore.
+Each skill should contain:
+- Skill Name
+- Category
+- Icon
+- Proficiency percentage
+
+Skill Categories:
+- Programming Languages
+- Flutter Development
+- Web Development
+- Database
+- Tools
+- AI/ML
+
+Use animated modern cards with hover effects.
+
+4. PROJECTS SECTION (MOST IMPORTANT)
+Fetch all projects dynamically from Firestore.
+
+Each project card should contain:
+- Project image
+- Title
+- Description
+- Technologies Used
+- GitHub Link
+- Live Website or APK Link
+- Featured tag
+
+Project cards should have:
+- Hover animations
+- Glassmorphism effect
+- Buttons visible on hover:
+   - View GitHub
+   - Live Demo / APK
+
+Include these projects initially:
+1. Crack DDCET
+2. Headlines Hub
+3. Lost & Found Hub
+
+Project card style should be premium and modern.
+
+5. EXPERIENCE SECTION
+Show internship experience dynamically.
+
+Include:
+- Flutter Developer Internship
+- Description:
+  Worked on Flutter mobile application development, UI improvements, and API integration using Dart and Material Design.
+
+6. CERTIFICATIONS SECTION
+Include:
+- Finishing School Training Program
+- Conducted by Knowledge Consortium of Gujarat (KCG), Government of Gujarat
+
+7. CONTACT SECTION
+Include:
+- Contact form
+- Email
+- LinkedIn
+- GitHub
+- Smooth modern layout
+
+8. FOOTER
+Modern footer with copyright and social links.
+
+ADMIN PANEL REQUIREMENTS:
+
+Create a secure Admin Dashboard accessible only after Firebase Authentication login.
+
+Admin Dashboard Features:
+1. Add/Edit/Delete Projects
+2. Add/Edit/Delete Skills
+3. Add/Edit/Delete Experience
+4. Add/Edit/Delete Certifications
+5. Upload project image URLs
+6. Toggle Featured Projects
+7. Dashboard statistics
+
+ADMIN PANEL UI:
+- Dark modern dashboard design
+- Sidebar navigation
+- Responsive layout
+- Data tables and forms
+- Toast notifications
+- Loading animations
+
+DATABASE STRUCTURE:
+
+Create Firebase Firestore collections:
+- projects
+- skills
+- experience
+- certifications
+- socials
+
+Each collection should have proper schema.
+
+EXTRA FEATURES:
+- Dark/Light theme toggle
+- Smooth page scrolling
+- Animated section transitions
+- SEO friendly structure
+- Optimized performance
+- Mobile-first responsive design
+- Professional loading screen
+- Scroll progress indicator
+
+IMPORTANT:
+- Generate complete working code
+- Include Firebase setup instructions
+- Add comments in important sections
+- Ensure professional production-level structure
+- Use modern developer portfolio standards
