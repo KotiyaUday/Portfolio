@@ -40,12 +40,19 @@ function LoadingScreen() {
   );
 }
 
+const timeout = (ms: number) =>
+  new Promise<void>((resolve) => setTimeout(resolve, ms));
+
 export default function Portfolio() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    seedFirestoreIfEmpty().finally(() => {
-      setTimeout(() => setLoading(false), 1200);
+    // Race seed against a 3-second timeout so Firestore errors never block the UI
+    Promise.race([
+      seedFirestoreIfEmpty(),
+      timeout(3000),
+    ]).finally(() => {
+      setTimeout(() => setLoading(false), 400);
     });
   }, []);
 
