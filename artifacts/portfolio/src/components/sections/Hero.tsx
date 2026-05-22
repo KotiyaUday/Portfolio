@@ -1,7 +1,50 @@
 import { motion } from "framer-motion";
 import { Github, Linkedin, Mail, Download, ArrowRight, ChevronDown } from "lucide-react";
+import { useEffect, useState } from "react";
 
-const roles = ["Flutter Developer", "MERN Stack Developer", "AI/ML Learner"];
+const roles = ["Flutter Developer", "MERN Stack Developer", "AI/ML Learner", "Open Source Enthusiast"];
+
+function TypewriterText() {
+  const [roleIndex, setRoleIndex] = useState(0);
+  const [displayed, setDisplayed] = useState("");
+  const [phase, setPhase] = useState<"typing" | "pause" | "deleting">("typing");
+
+  useEffect(() => {
+    const current = roles[roleIndex];
+
+    if (phase === "typing") {
+      if (displayed.length < current.length) {
+        const t = setTimeout(() => setDisplayed(current.slice(0, displayed.length + 1)), 65);
+        return () => clearTimeout(t);
+      } else {
+        const t = setTimeout(() => setPhase("pause"), 1800);
+        return () => clearTimeout(t);
+      }
+    }
+
+    if (phase === "pause") {
+      const t = setTimeout(() => setPhase("deleting"), 400);
+      return () => clearTimeout(t);
+    }
+
+    if (phase === "deleting") {
+      if (displayed.length > 0) {
+        const t = setTimeout(() => setDisplayed(displayed.slice(0, -1)), 35);
+        return () => clearTimeout(t);
+      } else {
+        setRoleIndex((i) => (i + 1) % roles.length);
+        setPhase("typing");
+      }
+    }
+  }, [displayed, phase, roleIndex]);
+
+  return (
+    <span className="text-blue-400 font-semibold">
+      {displayed}
+      <span className="inline-block w-0.5 h-5 bg-blue-400 ml-0.5 align-middle animate-pulse" />
+    </span>
+  );
+}
 
 export default function Hero() {
   const scrollTo = (id: string) => {
@@ -18,7 +61,6 @@ export default function Hero() {
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl animate-pulse" />
         <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-purple-600/10 rounded-full blur-3xl animate-pulse delay-1000" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-3xl" />
-        {/* Grid pattern */}
         <div
           className="absolute inset-0 opacity-[0.03]"
           style={{
@@ -54,21 +96,16 @@ export default function Hero() {
           </span>
         </motion.h1>
 
+        {/* Typewriter role line */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="flex flex-wrap justify-center gap-2 mb-6"
+          className="flex items-center justify-center gap-2 mb-6 text-lg sm:text-xl min-h-[2rem]"
           data-testid="hero-roles"
         >
-          {roles.map((role, i) => (
-            <span
-              key={role}
-              className="px-3 py-1 rounded-full text-sm font-medium bg-[#1E293B] border border-slate-700 text-slate-300"
-            >
-              {role}
-            </span>
-          ))}
+          <span className="text-slate-400">I'm a </span>
+          <TypewriterText />
         </motion.div>
 
         <motion.p
