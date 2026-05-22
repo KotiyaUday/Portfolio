@@ -10,6 +10,7 @@ import AdminProjects from "@/pages/admin/Projects";
 import AdminSkills from "@/pages/admin/Skills";
 import AdminExperience from "@/pages/admin/Experience";
 import AdminCertifications from "@/pages/admin/Certifications";
+import AdminSettings from "@/pages/admin/Settings";
 import AdminLayout from "@/components/admin/AdminLayout";
 
 const queryClient = new QueryClient();
@@ -46,6 +47,9 @@ function Router() {
       </Route>
       <Route path="/admin/certifications">
         <ProtectedRoute><AdminCertifications /></ProtectedRoute>
+      </Route>
+      <Route path="/admin/settings">
+        <ProtectedRoute><AdminSettings /></ProtectedRoute>
       </Route>
     </Switch>
   );

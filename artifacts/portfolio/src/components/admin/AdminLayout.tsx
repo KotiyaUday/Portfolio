@@ -3,7 +3,7 @@ import { Link, useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Code2, LayoutDashboard, FolderKanban, Wrench, Briefcase, Award,
-  LogOut, Menu, X, ChevronRight,
+  LogOut, Menu, X, ChevronRight, Settings,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -13,6 +13,7 @@ const navItems = [
   { label: "Skills", href: "/admin/skills", icon: Wrench },
   { label: "Experience", href: "/admin/experience", icon: Briefcase },
   { label: "Certifications", href: "/admin/certifications", icon: Award },
+  { label: "Settings", href: "/admin/settings", icon: Settings },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

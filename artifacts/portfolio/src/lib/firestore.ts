@@ -83,6 +83,45 @@ export const getExperience = () => getCollection<Experience>("experience");
 export const getCertifications = () => getCollection<Certification>("certifications");
 export const getSocials = () => getCollection<Social>("socials");
 
+// ── Settings ──────────────────────────────────────────────────────────────────
+
+export type PortfolioSettings = {
+  resumeUrl: string;
+  githubUrl: string;
+  linkedinUrl: string;
+  email: string;
+  heroTagline: string;
+};
+
+const SETTINGS_DOC = "portfolio";
+
+export async function getSettings(): Promise<PortfolioSettings> {
+  const defaults: PortfolioSettings = {
+    resumeUrl: "",
+    githubUrl: "https://github.com/udaykotiya",
+    linkedinUrl: "https://linkedin.com/in/udaykotiya",
+    email: "udaykotiya@gmail.com",
+    heroTagline: "Computer Engineering student passionate about Flutter development, web technologies, and AI/ML.",
+  };
+  try {
+    const snap = await withTimeout(
+      import("firebase/firestore").then(({ getDoc, doc }) => getDoc(doc(db, "settings", SETTINGS_DOC))),
+      2000
+    );
+    if (snap.exists()) {
+      return { ...defaults, ...(snap.data() as Partial<PortfolioSettings>) };
+    }
+    return defaults;
+  } catch {
+    return defaults;
+  }
+}
+
+export async function updateSettings(data: Partial<PortfolioSettings>): Promise<void> {
+  const { setDoc, doc, serverTimestamp } = await import("firebase/firestore");
+  await setDoc(doc(db, "settings", SETTINGS_DOC), { ...data, updatedAt: serverTimestamp() }, { merge: true });
+}
+
 async function addItem(col: string, data: object) {
   return addDoc(collection(db, col), { ...data, order: Date.now(), createdAt: serverTimestamp() });
 }

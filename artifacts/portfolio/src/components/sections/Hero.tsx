@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Github, Linkedin, Mail, Download, ArrowRight, ChevronDown } from "lucide-react";
 import { useEffect, useState } from "react";
+import { getSettings, type PortfolioSettings } from "@/lib/firestore";
 
 const roles = ["Flutter Developer", "MERN Stack Developer", "AI/ML Learner", "Open Source Enthusiast"];
 
@@ -46,10 +47,31 @@ function TypewriterText() {
   );
 }
 
+const defaultSettings: PortfolioSettings = {
+  resumeUrl: "",
+  githubUrl: "https://github.com/udaykotiya",
+  linkedinUrl: "https://linkedin.com/in/udaykotiya",
+  email: "udaykotiya@gmail.com",
+  heroTagline:
+    "Computer Engineering student passionate about Flutter development, web technologies, and AI/ML. Building practical applications and modern digital experiences.",
+};
+
 export default function Hero() {
+  const [settings, setSettings] = useState<PortfolioSettings>(defaultSettings);
+
+  useEffect(() => {
+    getSettings().then(setSettings).catch(() => {});
+  }, []);
+
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
+
+  const socials = [
+    { href: settings.githubUrl, icon: Github, label: "GitHub" },
+    { href: settings.linkedinUrl, icon: Linkedin, label: "LinkedIn" },
+    { href: `mailto:${settings.email}`, icon: Mail, label: "Email" },
+  ];
 
   return (
     <section
@@ -96,7 +118,6 @@ export default function Hero() {
           </span>
         </motion.h1>
 
-        {/* Typewriter role line */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -115,8 +136,7 @@ export default function Hero() {
           className="text-slate-400 text-lg max-w-2xl mx-auto mb-10 leading-relaxed"
           data-testid="hero-intro"
         >
-          Computer Engineering student passionate about Flutter development, web technologies, and
-          AI/ML. Building practical applications and modern digital experiences.
+          {settings.heroTagline}
         </motion.p>
 
         <motion.div
@@ -125,15 +145,27 @@ export default function Hero() {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="flex flex-wrap justify-center gap-4 mb-12"
         >
-          <a
-            href="#"
-            download
-            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 hover:scale-105"
-            data-testid="btn-download-resume"
-          >
-            <Download className="w-4 h-4" />
-            Download Resume
-          </a>
+          {settings.resumeUrl ? (
+            <a
+              href={settings.resumeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 hover:scale-105"
+              data-testid="btn-download-resume"
+            >
+              <Download className="w-4 h-4" />
+              Download Resume
+            </a>
+          ) : (
+            <span
+              className="flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/10 text-slate-500 font-semibold rounded-xl cursor-not-allowed select-none"
+              title="Resume not available yet"
+              data-testid="btn-download-resume-disabled"
+            >
+              <Download className="w-4 h-4" />
+              Download Resume
+            </span>
+          )}
           <button
             onClick={() => scrollTo("contact")}
             className="flex items-center gap-2 px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-white font-semibold rounded-xl transition-all duration-200 hover:scale-105"
@@ -150,11 +182,7 @@ export default function Hero() {
           transition={{ duration: 0.6, delay: 0.5 }}
           className="flex justify-center gap-4"
         >
-          {[
-            { href: "https://github.com/udaykotiya", icon: Github, label: "GitHub" },
-            { href: "https://linkedin.com/in/udaykotiya", icon: Linkedin, label: "LinkedIn" },
-            { href: "mailto:udaykotiya@gmail.com", icon: Mail, label: "Email" },
-          ].map(({ href, icon: Icon, label }) => (
+          {socials.map(({ href, icon: Icon, label }) => (
             <a
               key={label}
               href={href}
