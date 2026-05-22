@@ -1,44 +1,68 @@
-# [Project name]
+# Uday Kotiya Portfolio
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+A full-stack developer portfolio website for Uday Kotiya, built with React + Vite, Firebase Firestore (dynamic content), Firebase Authentication (admin panel), and Framer Motion animations.
 
 ## Run & Operate
 
+- `pnpm --filter @workspace/portfolio run dev` — run the portfolio (port auto-assigned)
 - `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
-- `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
-- `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env: `DATABASE_URL` — Postgres connection string
 
 ## Stack
 
 - pnpm workspaces, Node.js 24, TypeScript 5.9
-- API: Express 5
-- DB: PostgreSQL + Drizzle ORM
-- Validation: Zod (`zod/v4`), `drizzle-zod`
-- API codegen: Orval (from OpenAPI spec)
-- Build: esbuild (CJS bundle)
+- Frontend: React + Vite + Tailwind CSS + Framer Motion
+- Auth: Firebase Authentication
+- Database: Firebase Firestore (dynamic content)
+- Icons: lucide-react + react-icons/si
+- API: Express 5 (for health check only — content comes from Firestore)
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/portfolio/src/` — main portfolio app
+  - `pages/Portfolio.tsx` — main portfolio page (all sections)
+  - `pages/AdminLogin.tsx` — admin login
+  - `pages/admin/` — admin CRUD pages
+  - `components/sections/` — Hero, About, Skills, Projects, Experience, Certifications, Contact
+  - `components/admin/AdminLayout.tsx` — admin sidebar layout
+  - `lib/firebase.ts` — Firebase app initialization
+  - `lib/firestore.ts` — Firestore CRUD helpers
+  - `lib/seed.ts` — auto-seeds default data on first load
+  - `contexts/ThemeContext.tsx` — dark/light theme
+  - `contexts/AuthContext.tsx` — Firebase auth state
+
+## Firestore Collections
+
+- `projects` — title, description, image, technologies[], githubUrl, liveUrl, featured, order
+- `skills` — name, category, icon (SiIconName), proficiency (0-100), order
+- `experience` — role, company, duration, description, technologies[], order
+- `certifications` — title, issuer, date, credentialUrl, order
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- All portfolio content is dynamic from Firestore — updating the DB updates the site without code changes.
+- Firebase Authentication protects the admin panel at `/admin`.
+- On first load, `seed.ts` auto-populates Firestore with default data (3 projects, 15 skills, 1 experience, 1 certification) if collections are empty.
+- No backend API is needed for portfolio content — Firestore is called directly from the frontend.
+- The shared Express API server only handles `/api/healthz`.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+A professional developer portfolio with 7 sections (Hero, About, Skills, Projects, Experience, Certifications, Contact), a dark/light theme toggle, scroll progress indicator, and a full admin dashboard for managing all content.
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- Color theme: #0F172A background, #3B82F6 accent, #8B5CF6 secondary accent
+- Typography: Inter font
+- Dark mode by default
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- **Firestore must be enabled** in Firebase Console before the portfolio can load data. Go to Firebase Console → Firestore Database → Create database → Start in test mode.
+- Firebase Auth must have the Email/Password sign-in method enabled for the admin panel.
+- Skill icons use the `react-icons/si` naming convention (e.g. `SiFlutter`, `SiReact`).
+- The `VITE_` prefix is required for all env vars used in the frontend.
 
 ## Pointers
 
