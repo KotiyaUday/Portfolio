@@ -1,10 +1,23 @@
-import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 import { Github, Linkedin, Mail, Code2, Heart } from "lucide-react";
+import { getSettings, DEFAULT_SETTINGS, type PortfolioSettings } from "@/lib/firestore";
 
 export default function Footer() {
+  const [settings, setSettings] = useState<PortfolioSettings>(DEFAULT_SETTINGS);
+
+  useEffect(() => {
+    getSettings().then(setSettings).catch(() => {});
+  }, []);
+
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
+
+  const socials = [
+    { href: settings.githubUrl, icon: Github, label: "GitHub" },
+    { href: settings.linkedinUrl, icon: Linkedin, label: "LinkedIn" },
+    { href: `mailto:${settings.email}`, icon: Mail, label: "Email" },
+  ];
 
   return (
     <footer className="bg-[#0F172A] border-t border-slate-800 py-12">
@@ -19,7 +32,7 @@ export default function Footer() {
               <span className="text-white font-bold text-xl">Uday Kotiya</span>
             </div>
             <p className="text-slate-400 text-sm leading-relaxed">
-              Flutter Developer | MERN Stack Developer | AI/ML Learner. Building practical applications and modern digital experiences.
+              {settings.heroTagline}
             </p>
           </div>
 
@@ -50,15 +63,11 @@ export default function Footer() {
           <div>
             <h4 className="text-white font-semibold mb-4">Connect</h4>
             <div className="flex gap-3">
-              {[
-                { href: "https://github.com/udaykotiya", icon: Github, label: "GitHub" },
-                { href: "https://linkedin.com/in/udaykotiya", icon: Linkedin, label: "LinkedIn" },
-                { href: "mailto:udaykotiya@gmail.com", icon: Mail, label: "Email" },
-              ].map(({ href, icon: Icon, label }) => (
+              {socials.map(({ href, icon: Icon, label }) => (
                 <a
                   key={label}
                   href={href}
-                  target="_blank"
+                  target={label === "Email" ? undefined : "_blank"}
                   rel="noopener noreferrer"
                   className="p-3 bg-[#1E293B] border border-slate-700 rounded-xl text-slate-400 hover:text-white hover:border-blue-500/50 transition-all"
                   aria-label={label}
@@ -68,6 +77,9 @@ export default function Footer() {
                 </a>
               ))}
             </div>
+            <p className="text-slate-600 text-xs mt-4 leading-relaxed">
+              Update links anytime from the<br />admin → Settings panel.
+            </p>
           </div>
         </div>
 

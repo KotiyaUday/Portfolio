@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
-import { Mail, Github, Linkedin, Send, CheckCircle, MapPin, Loader2 } from "lucide-react";
+import { Mail, Github, Linkedin, Send, CheckCircle, MapPin } from "lucide-react";
 import { getSettings, DEFAULT_SETTINGS, type PortfolioSettings } from "@/lib/firestore";
 
 export default function Contact() {
@@ -8,42 +8,23 @@ export default function Contact() {
   const inView = useInView(ref, { once: true, margin: "-100px" });
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
   const [sent, setSent] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const [settings, setSettings] = useState<PortfolioSettings>(DEFAULT_SETTINGS);
 
   useEffect(() => {
     getSettings().then(setSettings).catch(() => {});
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setError("");
-    try {
-      const res = await fetch(`https://formsubmit.co/ajax/${settings.email}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({
-          name: form.name,
-          email: form.email,
-          subject: form.subject || `Portfolio message from ${form.name}`,
-          message: form.message,
-          _captcha: "false",
-        }),
-      });
-      const data = await res.json();
-      if (data.success === "true" || data.success === true) {
-        setSent(true);
-        setForm({ name: "", email: "", subject: "", message: "" });
-      } else {
-        setError("Something went wrong. Please try emailing me directly.");
-      }
-    } catch {
-      setError("Could not send — please email me directly at " + settings.email);
-    } finally {
-      setLoading(false);
-    }
+    const subject = encodeURIComponent(
+      form.subject || `Portfolio message from ${form.name}`
+    );
+    const body = encodeURIComponent(
+      `Hi Uday,\n\nMy name is ${form.name} (${form.email}).\n\n${form.message}\n\n— ${form.name}`
+    );
+    window.location.href = `mailto:${settings.email}?subject=${subject}&body=${body}`;
+    setSent(true);
+    setForm({ name: "", email: "", subject: "", message: "" });
   };
 
   const contacts = [
@@ -146,15 +127,21 @@ export default function Contact() {
                 <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mb-4">
                   <CheckCircle className="w-8 h-8 text-green-400" />
                 </div>
-                <h3 className="text-white font-bold text-xl mb-2">Message sent!</h3>
-                <p className="text-slate-400 text-sm">
-                  Thank you for reaching out. I'll get back to you soon.
+                <h3 className="text-white font-bold text-xl mb-2">Email client opened!</h3>
+                <p className="text-slate-400 text-sm max-w-xs">
+                  Your default email app should have opened with your message pre-filled — just hit Send!
                 </p>
+                <a
+                  href={`mailto:${settings.email}`}
+                  className="mt-4 text-blue-400 hover:text-blue-300 text-sm transition-colors underline"
+                >
+                  Click here if it didn't open
+                </a>
                 <button
                   onClick={() => setSent(false)}
-                  className="mt-6 text-blue-400 hover:text-blue-300 text-sm transition-colors"
+                  className="mt-4 text-slate-500 hover:text-slate-400 text-sm transition-colors"
                 >
-                  Send another message
+                  Fill in another message
                 </button>
               </motion.div>
             ) : (
@@ -209,27 +196,16 @@ export default function Contact() {
                   />
                 </div>
 
-                {error && (
-                  <p className="text-red-400 text-sm bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">
-                    {error}
-                  </p>
-                )}
-
                 <button
                   type="submit"
-                  disabled={loading}
-                  className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40"
                   data-testid="btn-submit-contact"
                 >
-                  {loading ? (
-                    <><Loader2 className="w-4 h-4 animate-spin" /> Sending...</>
-                  ) : (
-                    <><Send className="w-4 h-4" /> Send Message</>
-                  )}
+                  <Send className="w-4 h-4" /> Send Message
                 </button>
 
                 <p className="text-slate-600 text-xs text-center">
-                  Message goes directly to {settings.email}
+                  Opens your email app pre-filled — just hit Send.
                 </p>
               </form>
             )}
