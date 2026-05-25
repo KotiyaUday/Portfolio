@@ -16,10 +16,22 @@ const navItems = [
   { label: "Settings", href: "/admin/settings", icon: Settings },
 ];
 
+import { useEffect } from "react";
+
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
   const { logout, user } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Admin panel is always dark — restore saved theme on exit
+  useEffect(() => {
+    document.documentElement.classList.add("dark");
+    return () => {
+      const saved = localStorage.getItem("theme") || "dark";
+      if (saved === "light") document.documentElement.classList.remove("dark");
+      else document.documentElement.classList.add("dark");
+    };
+  }, []);
 
   const Sidebar = () => (
     <div className="flex flex-col h-full">
