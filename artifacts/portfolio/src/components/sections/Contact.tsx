@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
-import { Mail, Github, Linkedin, Send, CheckCircle, MapPin } from "lucide-react";
+import { Mail, Github, Linkedin, Send, CheckCircle, MapPin, Loader2, AlertCircle } from "lucide-react";
 import { getSettings, DEFAULT_SETTINGS, type PortfolioSettings } from "@/lib/firestore";
 
 export default function Contact() {
@@ -8,32 +8,40 @@ export default function Contact() {
   const inView = useInView(ref, { once: true, margin: "-100px" });
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [settings, setSettings] = useState<PortfolioSettings>(DEFAULT_SETTINGS);
 
   useEffect(() => {
     getSettings().then(setSettings).catch(() => {});
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const subject = encodeURIComponent(
-      form.subject || `Portfolio message from ${form.name}`
-    );
-    const body = encodeURIComponent(
-      `Hi Uday,\n\nMy name is ${form.name} (${form.email}).\n\n${form.message}\n\n— ${form.name}`
-    );
-    window.location.href = `mailto:${settings.email}?subject=${subject}&body=${body}`;
-    setSent(true);
-    setForm({ name: "", email: "", subject: "", message: "" });
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json() as { success: boolean; error?: string };
+      if (data.success) {
+        setSent(true);
+        setForm({ name: "", email: "", subject: "", message: "" });
+      } else {
+        setError(data.error ?? "Something went wrong. Please try again.");
+      }
+    } catch {
+      setError("Network error — please check your connection and try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const contacts = [
-    {
-      icon: Mail,
-      label: "Email",
-      value: settings.email,
-      href: `mailto:${settings.email}`,
-    },
+    { icon: Mail, label: "Email", value: settings.email, href: `mailto:${settings.email}` },
     {
       icon: Linkedin,
       label: "LinkedIn",
@@ -89,7 +97,6 @@ export default function Contact() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-4 p-5 bg-[#1E293B] rounded-2xl border border-slate-700/50 hover:border-blue-500/30 transition-all group hover:shadow-lg hover:shadow-blue-500/5"
-                data-testid={`link-contact-${label.toLowerCase()}`}
               >
                 <div className="w-12 h-12 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center justify-center group-hover:bg-blue-500/20 transition-colors flex-shrink-0">
                   <Icon className="w-5 h-5 text-blue-400" />
@@ -101,7 +108,6 @@ export default function Contact() {
               </a>
             ))}
 
-            {/* Availability text */}
             <div className="p-5 bg-gradient-to-br from-blue-600/10 to-purple-600/10 rounded-2xl border border-blue-500/20">
               <div className="flex items-start gap-3">
                 <div className="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -127,21 +133,15 @@ export default function Contact() {
                 <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mb-4">
                   <CheckCircle className="w-8 h-8 text-green-400" />
                 </div>
-                <h3 className="text-white font-bold text-xl mb-2">Email client opened!</h3>
+                <h3 className="text-white font-bold text-xl mb-2">Message sent!</h3>
                 <p className="text-slate-400 text-sm max-w-xs">
-                  Your default email app should have opened with your message pre-filled — just hit Send!
+                  Thanks for reaching out. I'll get back to you as soon as possible.
                 </p>
-                <a
-                  href={`mailto:${settings.email}`}
-                  className="mt-4 text-blue-400 hover:text-blue-300 text-sm transition-colors underline"
-                >
-                  Click here if it didn't open
-                </a>
                 <button
                   onClick={() => setSent(false)}
-                  className="mt-4 text-slate-500 hover:text-slate-400 text-sm transition-colors"
+                  className="mt-6 text-blue-400 hover:text-blue-300 text-sm transition-colors"
                 >
-                  Fill in another message
+                  Send another message
                 </button>
               </motion.div>
             ) : (
@@ -156,7 +156,6 @@ export default function Contact() {
                       onChange={(e) => setForm({ ...form, name: e.target.value })}
                       className={inputClass}
                       placeholder="John Doe"
-                      data-testid="input-contact-name"
                     />
                   </div>
                   <div>
@@ -168,7 +167,6 @@ export default function Contact() {
                       onChange={(e) => setForm({ ...form, email: e.target.value })}
                       className={inputClass}
                       placeholder="john@example.com"
-                      data-testid="input-contact-email"
                     />
                   </div>
                 </div>
@@ -180,7 +178,6 @@ export default function Contact() {
                     onChange={(e) => setForm({ ...form, subject: e.target.value })}
                     className={inputClass}
                     placeholder="Project inquiry, collaboration, etc."
-                    data-testid="input-contact-subject"
                   />
                 </div>
                 <div>
@@ -192,20 +189,30 @@ export default function Contact() {
                     onChange={(e) => setForm({ ...form, message: e.target.value })}
                     className={`${inputClass} resize-none`}
                     placeholder="Tell me about your project or opportunity..."
-                    data-testid="input-contact-message"
                   />
                 </div>
 
+                {error && (
+                  <div className="flex items-start gap-2 text-red-400 text-sm bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">
+                    <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                    <span>{error}</span>
+                  </div>
+                )}
+
                 <button
                   type="submit"
-                  className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40"
-                  data-testid="btn-submit-contact"
+                  disabled={loading}
+                  className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <Send className="w-4 h-4" /> Send Message
+                  {loading ? (
+                    <><Loader2 className="w-4 h-4 animate-spin" /> Sending...</>
+                  ) : (
+                    <><Send className="w-4 h-4" /> Send Message</>
+                  )}
                 </button>
 
                 <p className="text-slate-600 text-xs text-center">
-                  Opens your email app pre-filled — just hit Send.
+                  Message goes directly to {settings.email}
                 </p>
               </form>
             )}

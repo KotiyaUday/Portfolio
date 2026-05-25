@@ -1,12 +1,18 @@
 import { useEffect, useState } from "react";
 import { Github, Linkedin, Mail, Code2, Heart } from "lucide-react";
-import { getSettings, DEFAULT_SETTINGS, type PortfolioSettings } from "@/lib/firestore";
+import {
+  getSettings,
+  DEFAULT_SETTINGS,
+  type PortfolioSettings,
+} from "@/lib/firestore";
 
 export default function Footer() {
   const [settings, setSettings] = useState<PortfolioSettings>(DEFAULT_SETTINGS);
 
   useEffect(() => {
-    getSettings().then(setSettings).catch(() => {});
+    getSettings()
+      .then(setSettings)
+      .catch(() => {});
   }, []);
 
   const scrollTo = (id: string) => {
@@ -77,9 +83,6 @@ export default function Footer() {
                 </a>
               ))}
             </div>
-            <p className="text-slate-600 text-xs mt-4 leading-relaxed">
-              Update links anytime from the<br />admin → Settings panel.
-            </p>
           </div>
         </div>
 
@@ -88,7 +91,9 @@ export default function Footer() {
             © {new Date().getFullYear()} Uday Kotiya. All rights reserved.
           </p>
           <p className="text-slate-500 text-sm flex items-center gap-1">
-            Built with <Heart className="w-3.5 h-3.5 text-red-500 fill-red-500" /> using React & Firebase
+            Built with{" "}
+            <Heart className="w-3.5 h-3.5 text-red-500 fill-red-500" /> using
+            React & Firebase
           </p>
         </div>
       </div>
