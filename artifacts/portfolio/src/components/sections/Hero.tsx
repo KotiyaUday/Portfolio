@@ -5,6 +5,13 @@ import { getSettings, type PortfolioSettings } from "@/lib/firestore";
 
 const roles = ["Flutter Developer", "MERN Stack Developer", "AI/ML Learner", "Open Source Enthusiast"];
 
+const roleColors: Record<string, string> = {
+  "Flutter Developer": "from-cyan-400 to-blue-500",
+  "MERN Stack Developer": "from-green-400 to-emerald-500",
+  "AI/ML Learner": "from-purple-400 to-violet-500",
+  "Open Source Enthusiast": "from-orange-400 to-pink-500",
+};
+
 function TypewriterText() {
   const [roleIndex, setRoleIndex] = useState(0);
   const [displayed, setDisplayed] = useState("");
@@ -15,22 +22,25 @@ function TypewriterText() {
 
     if (phase === "typing") {
       if (displayed.length < current.length) {
-        const t = setTimeout(() => setDisplayed(current.slice(0, displayed.length + 1)), 65);
+        const t = setTimeout(
+          () => setDisplayed(current.slice(0, displayed.length + 1)),
+          55 + Math.random() * 25
+        );
         return () => clearTimeout(t);
       } else {
-        const t = setTimeout(() => setPhase("pause"), 1800);
+        const t = setTimeout(() => setPhase("pause"), 2000);
         return () => clearTimeout(t);
       }
     }
 
     if (phase === "pause") {
-      const t = setTimeout(() => setPhase("deleting"), 400);
+      const t = setTimeout(() => setPhase("deleting"), 300);
       return () => clearTimeout(t);
     }
 
     if (phase === "deleting") {
       if (displayed.length > 0) {
-        const t = setTimeout(() => setDisplayed(displayed.slice(0, -1)), 35);
+        const t = setTimeout(() => setDisplayed(displayed.slice(0, -1)), 28);
         return () => clearTimeout(t);
       } else {
         setRoleIndex((i) => (i + 1) % roles.length);
@@ -39,10 +49,23 @@ function TypewriterText() {
     }
   }, [displayed, phase, roleIndex]);
 
+  const gradient = roleColors[roles[roleIndex]];
+
   return (
-    <span className="text-blue-400 font-semibold">
-      {displayed}
-      <span className="inline-block w-0.5 h-5 bg-blue-400 ml-0.5 align-middle animate-pulse" />
+    <span
+      className={`inline-flex items-center gap-1 bg-gradient-to-r ${gradient} bg-clip-text text-transparent font-bold`}
+    >
+      {displayed || "\u00A0"}
+      <span
+        className="inline-block w-[3px] rounded-full self-stretch"
+        style={{
+          background: "currentColor",
+          WebkitTextFillColor: "initial",
+          backgroundImage: "none",
+          backgroundColor: "#60a5fa",
+          animation: "blink 1s step-start infinite",
+        }}
+      />
     </span>
   );
 }
@@ -122,11 +145,15 @@ export default function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="flex items-center justify-center gap-2 mb-6 text-lg sm:text-xl min-h-[2rem]"
+          className="mb-8 min-h-[3.5rem] flex flex-col items-center justify-center"
           data-testid="hero-roles"
         >
-          <span className="text-slate-400">I'm a </span>
-          <TypewriterText />
+          <div className="flex items-center justify-center gap-3 px-5 py-2.5 rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur-sm">
+            <span className="text-slate-400 text-base sm:text-lg font-medium tracking-wide">I'm a</span>
+            <span className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight">
+              <TypewriterText />
+            </span>
+          </div>
         </motion.div>
 
         <motion.p
