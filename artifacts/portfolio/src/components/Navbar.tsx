@@ -22,15 +22,29 @@ export default function Navbar() {
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
+
     window.addEventListener("scroll", onScroll);
+
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // FIXED SCROLL FUNCTION
   const scrollTo = (href: string) => {
-    setOpen(false);
     const id = href.replace("#", "");
     const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: "smooth" });
+
+    if (el) {
+      // Close mobile menu
+      setOpen(false);
+
+      // Delay for smooth mobile navigation
+      setTimeout(() => {
+        el.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 200);
+    }
   };
 
   return (
@@ -46,6 +60,8 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
+
+          {/* LOGO */}
           <button
             onClick={() => scrollTo("#home")}
             className="flex items-center gap-2 text-white font-bold text-xl group"
@@ -54,11 +70,13 @@ export default function Navbar() {
             <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
               <Code2 className="w-4 h-4 text-white" />
             </div>
+
             <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
               UK
             </span>
           </button>
 
+          {/* DESKTOP NAVIGATION */}
           <div className="hidden md:flex items-center gap-1">
             {navLinks.map((link) => (
               <button
@@ -70,6 +88,8 @@ export default function Navbar() {
                 {link.label}
               </button>
             ))}
+
+            {/* ADMIN BUTTON */}
             <Link
               href="/admin"
               className="ml-2 px-3 py-2 text-sm text-blue-400 hover:text-blue-300 hover:bg-blue-500/10 rounded-lg transition-all"
@@ -77,44 +97,66 @@ export default function Navbar() {
             >
               Admin
             </Link>
+
+            {/* THEME BUTTON */}
             <button
               onClick={toggleTheme}
               className="ml-2 p-2 text-slate-300 hover:text-white hover:bg-white/5 rounded-lg transition-all"
               data-testid="btn-theme-toggle"
               aria-label="Toggle theme"
             >
-              {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              {theme === "dark" ? (
+                <Sun className="w-4 h-4" />
+              ) : (
+                <Moon className="w-4 h-4" />
+              )}
             </button>
           </div>
 
+          {/* MOBILE NAVIGATION */}
           <div className="md:hidden flex items-center gap-2">
+
+            {/* THEME BUTTON */}
             <button
               onClick={toggleTheme}
               className="p-2 text-slate-300 hover:text-white rounded-lg transition-all"
               data-testid="btn-theme-toggle-mobile"
             >
-              {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              {theme === "dark" ? (
+                <Sun className="w-4 h-4" />
+              ) : (
+                <Moon className="w-4 h-4" />
+              )}
             </button>
+
+            {/* MENU BUTTON */}
             <button
               onClick={() => setOpen(!open)}
               className="p-2 text-slate-300 hover:text-white rounded-lg transition-all"
               data-testid="btn-menu-toggle"
             >
-              {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {open ? (
+                <X className="w-5 h-5" />
+              ) : (
+                <Menu className="w-5 h-5" />
+              )}
             </button>
           </div>
         </div>
       </div>
 
+      {/* MOBILE MENU */}
       <AnimatePresence>
         {open && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.25 }}
             className="md:hidden bg-[#0F172A]/95 backdrop-blur-md border-t border-blue-500/10"
           >
             <div className="px-4 py-3 space-y-1">
+
               {navLinks.map((link) => (
                 <button
                   key={link.href}
@@ -124,12 +166,15 @@ export default function Navbar() {
                   {link.label}
                 </button>
               ))}
+
+              {/* ADMIN PANEL */}
               <Link
                 href="/admin"
                 className="block px-3 py-2 text-blue-400 hover:text-blue-300 hover:bg-blue-500/10 rounded-lg transition-all text-sm"
               >
                 Admin Panel
               </Link>
+
             </div>
           </motion.div>
         )}

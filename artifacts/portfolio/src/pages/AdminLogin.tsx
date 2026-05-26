@@ -116,6 +116,11 @@ export default function AdminLogin() {
           <p className="text-center text-slate-500 text-xs mt-6">
             This admin panel is protected by Firebase Authentication.
           </p>
+          <a href="/">
+            <p className="text-center text-slate-500 text-m mt-6 hover:underline hover:text-blue-400 transition-colors duration-300">
+              Go to Portfolio
+            </p>
+          </a>
         </div>
       </motion.div>
     </div>

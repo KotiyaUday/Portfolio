@@ -3,7 +3,7 @@ import { Link, useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Code2, LayoutDashboard, FolderKanban, Wrench, Briefcase, Award,
-  LogOut, Menu, X, ChevronRight, Settings,
+  LogOut, Menu, ChevronRight, Settings,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 

@@ -93,7 +93,6 @@ export default function Hero() {
   const socials = [
     { href: settings.githubUrl, icon: Github, label: "GitHub" },
     { href: settings.linkedinUrl, icon: Linkedin, label: "LinkedIn" },
-    { href: `mailto:${settings.email}`, icon: Mail, label: "Email" },
   ];
 
   return (

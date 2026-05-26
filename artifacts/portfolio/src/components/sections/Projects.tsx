@@ -6,8 +6,10 @@ import { Github, ExternalLink, Star, FolderOpen } from "lucide-react";
 const fallbackProjects: Omit<Project, "id">[] = [
   {
     title: "Crack DDCET",
-    description: "A comprehensive exam preparation app for DDCET aspirants with topic-wise practice questions, mock tests, and performance analytics to track progress.",
-    image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&auto=format&fit=crop",
+    description:
+      "A comprehensive exam preparation app for DDCET aspirants with topic-wise practice questions, mock tests, and performance analytics to track progress.",
+    image:
+      "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&auto=format&fit=crop",
     technologies: ["Flutter", "Firebase", "Dart", "Firestore"],
     githubUrl: "https://github.com/udaykotiya",
     liveUrl: "",
@@ -16,8 +18,10 @@ const fallbackProjects: Omit<Project, "id">[] = [
   },
   {
     title: "Headlines Hub",
-    description: "A modern news aggregator app that fetches real-time headlines across categories with offline reading, bookmarks, and a clean reader mode.",
-    image: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&auto=format&fit=crop",
+    description:
+      "A modern news aggregator app that fetches real-time headlines across categories with offline reading, bookmarks, and a clean reader mode.",
+    image:
+      "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&auto=format&fit=crop",
     technologies: ["Flutter", "REST API", "Dart", "Provider"],
     githubUrl: "https://github.com/udaykotiya",
     liveUrl: "",
@@ -26,8 +30,10 @@ const fallbackProjects: Omit<Project, "id">[] = [
   },
   {
     title: "Lost & Found Hub",
-    description: "A community platform to report lost items and find them back. Features real-time notifications, image upload, location tagging, and chat.",
-    image: "https://images.unsplash.com/photo-1586892478382-8e64fc0eefca?w=800&auto=format&fit=crop",
+    description:
+      "A community platform to report lost items and find them back. Features real-time notifications, image upload, location tagging, and chat.",
+    image:
+      "https://images.unsplash.com/photo-1586892478382-8e64fc0eefca?w=800&auto=format&fit=crop",
     technologies: ["Flutter", "Firebase", "Firestore", "Cloud Storage"],
     githubUrl: "https://github.com/udaykotiya",
     liveUrl: "",
@@ -46,18 +52,28 @@ export default function Projects() {
   useEffect(() => {
     getProjects()
       .then((data) => {
-        setProjects(data.length > 0 ? data : fallbackProjects.map((p, i) => ({ ...p, id: `fallback-${i}` })));
+        setProjects(
+          data.length > 0
+            ? data
+            : fallbackProjects.map((p, i) => ({ ...p, id: `fallback-${i}` })),
+        );
       })
       .catch(() => {
-        setProjects(fallbackProjects.map((p, i) => ({ ...p, id: `fallback-${i}` })));
+        setProjects(
+          fallbackProjects.map((p, i) => ({ ...p, id: `fallback-${i}` })),
+        );
       })
       .finally(() => setLoading(false));
   }, []);
 
-  const filtered = filter === "featured" ? projects.filter((p) => p.featured) : projects;
+  const filtered =
+    filter === "featured" ? projects.filter((p) => p.featured) : projects;
 
   return (
-    <section id="projects" className="py-24 bg-[#0F172A] relative overflow-hidden">
+    <section
+      id="projects"
+      className="py-24 bg-[#0F172A] relative overflow-hidden"
+    >
       <div className="absolute top-1/2 right-0 w-96 h-96 bg-purple-600/5 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6" ref={ref}>
@@ -67,7 +83,9 @@ export default function Projects() {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <span className="text-blue-400 font-medium text-sm uppercase tracking-wider">What I've built</span>
+          <span className="text-blue-400 font-medium text-sm uppercase tracking-wider">
+            What I've built
+          </span>
           <h2 className="text-4xl font-bold text-white mt-2">
             My <span className="text-blue-400">Projects</span>
           </h2>
@@ -99,7 +117,10 @@ export default function Projects() {
         {loading ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-72 bg-[#1E293B] rounded-2xl animate-pulse" />
+              <div
+                key={i}
+                className="h-72 bg-[#1E293B] rounded-2xl animate-pulse"
+              />
             ))}
           </div>
         ) : (
@@ -114,7 +135,7 @@ export default function Projects() {
               {filtered.map((project, i) => (
                 <motion.div
                   key={project.id}
-                  initial={{ opacity: 0, y: 30 }}
+                  initial={{ opacity: 0.0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: i * 0.1 }}
                   className="group relative bg-[#1E293B] rounded-2xl overflow-hidden border border-slate-700/50 hover:border-blue-500/40 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/10"
@@ -122,7 +143,10 @@ export default function Projects() {
                 >
                   <div className="relative overflow-hidden h-48">
                     <img
-                      src={project.image || "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop"}
+                      src={
+                        project.image ||
+                        "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop"
+                      }
                       alt={project.title}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                     />

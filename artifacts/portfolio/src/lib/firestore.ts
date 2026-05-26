@@ -79,6 +79,11 @@ export type PortfolioSettings = {
   educationDuration: string;
   educationDescription: string;
 
+  educationDegree1: string;
+  educationSchool1: string;
+  educationDuration1: string;
+  educationDescription1: string;
+
   // About — Current Interests  (comma-separated list)
   interests: string;
 

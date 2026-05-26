@@ -1,15 +1,39 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "wouter";
-import { getProjects, getSkills, getExperience, getCertifications } from "@/lib/firestore";
-import { FolderKanban, Wrench, Briefcase, Award, TrendingUp, ArrowRight, Star } from "lucide-react";
+import {
+  getProjects,
+  getSkills,
+  getExperience,
+  getCertifications,
+} from "@/lib/firestore";
+import {
+  FolderKanban,
+  Wrench,
+  Briefcase,
+  Award,
+  TrendingUp,
+  ArrowRight,
+  Star,
+} from "lucide-react";
 
 export default function Dashboard() {
-  const [counts, setCounts] = useState({ projects: 0, skills: 0, experience: 0, certifications: 0, featured: 0 });
+  const [counts, setCounts] = useState({
+    projects: 0,
+    skills: 0,
+    experience: 0,
+    certifications: 0,
+    featured: 0,
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([getProjects(), getSkills(), getExperience(), getCertifications()])
+    Promise.all([
+      getProjects(),
+      getSkills(),
+      getExperience(),
+      getCertifications(),
+    ])
       .then(([projects, skills, experience, certifications]) => {
         setCounts({
           projects: projects.length,
@@ -24,17 +48,43 @@ export default function Dashboard() {
   }, []);
 
   const stats = [
-    { label: "Projects", value: counts.projects, icon: FolderKanban, color: "from-blue-500 to-cyan-500", href: "/admin/projects" },
-    { label: "Skills", value: counts.skills, icon: Wrench, color: "from-purple-500 to-pink-500", href: "/admin/skills" },
-    { label: "Experience", value: counts.experience, icon: Briefcase, color: "from-green-500 to-emerald-500", href: "/admin/experience" },
-    { label: "Certifications", value: counts.certifications, icon: Award, color: "from-yellow-500 to-orange-500", href: "/admin/certifications" },
+    {
+      label: "Projects",
+      value: counts.projects,
+      icon: FolderKanban,
+      color: "from-blue-500 to-cyan-500",
+      href: "/admin/projects",
+    },
+    {
+      label: "Skills",
+      value: counts.skills,
+      icon: Wrench,
+      color: "from-purple-500 to-pink-500",
+      href: "/admin/skills",
+    },
+    {
+      label: "Experience",
+      value: counts.experience,
+      icon: Briefcase,
+      color: "from-green-500 to-emerald-500",
+      href: "/admin/experience",
+    },
+    {
+      label: "Certifications",
+      value: counts.certifications,
+      icon: Award,
+      color: "from-yellow-500 to-orange-500",
+      href: "/admin/certifications",
+    },
   ];
 
   return (
     <div>
       <div className="mb-8">
         <h1 className="text-white font-bold text-2xl sm:text-3xl">Dashboard</h1>
-        <p className="text-slate-400 mt-1">Overview of your portfolio content</p>
+        <p className="text-slate-400 mt-1">
+          Overview of your portfolio content
+        </p>
       </div>
 
       <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
@@ -51,12 +101,16 @@ export default function Dashboard() {
               data-testid={`stat-card-${stat.label.toLowerCase()}`}
             >
               <div className="flex items-start justify-between mb-4">
-                <div className={`w-11 h-11 bg-gradient-to-br ${stat.color} rounded-xl flex items-center justify-center shadow-lg opacity-90`}>
+                <div
+                  className={`w-11 h-11 bg-gradient-to-br ${stat.color} rounded-xl flex items-center justify-center shadow-lg opacity-90`}
+                >
                   <stat.icon className="w-5 h-5 text-white" />
                 </div>
                 <ArrowRight className="w-4 h-4 text-slate-600 group-hover:text-blue-400 transition-colors" />
               </div>
-              <div className={`text-3xl font-bold bg-gradient-to-r ${stat.color} bg-clip-text text-transparent`}>
+              <div
+                className={`text-3xl font-bold bg-gradient-to-r ${stat.color} bg-clip-text text-transparent`}
+              >
                 {loading ? "—" : stat.value}
               </div>
               <div className="text-slate-400 text-sm mt-1">{stat.label}</div>
@@ -76,9 +130,16 @@ export default function Dashboard() {
             <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
             <h3 className="text-white font-semibold">Featured Projects</h3>
           </div>
-          <div className="text-4xl font-bold text-yellow-400 mb-1">{loading ? "—" : counts.featured}</div>
-          <p className="text-slate-400 text-sm">out of {counts.projects} total projects marked as featured</p>
-          <Link href="/admin/projects" className="inline-flex items-center gap-1 text-blue-400 hover:text-blue-300 text-sm mt-4 transition-colors">
+          <div className="text-4xl font-bold text-yellow-400 mb-1">
+            {loading ? "—" : counts.featured}
+          </div>
+          <p className="text-slate-400 text-sm">
+            out of {counts.projects} total projects marked as featured
+          </p>
+          <Link
+            href="/admin/projects"
+            className="inline-flex items-center gap-1 text-blue-400 hover:text-blue-300 text-sm mt-4 transition-colors"
+          >
             Manage <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </motion.div>

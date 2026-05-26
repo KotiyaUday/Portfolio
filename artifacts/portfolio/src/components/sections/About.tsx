@@ -2,15 +2,51 @@ import { motion, useInView } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
 import { GraduationCap, MapPin, Code, Brain, Sparkles, CalendarDays, BookOpen } from "lucide-react";
 import { getSettings, parseInterests, parseFocusedOn, DEFAULT_SETTINGS, type PortfolioSettings } from "@/lib/firestore";
+import {
+  getProjects,
+  getSkills,
+  getExperience,
+  getCertifications,
+} from "@/lib/firestore";
+
+export default function Dashboard() {
+  const [counts, setCounts] = useState({
+    projects: 0,
+    skills: 0,
+    experience: 0,
+    certifications: 0,
+    featured: 0,
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([
+      getProjects(),
+      getSkills(),
+      getExperience(),
+      getCertifications(),
+    ])
+      .then(([projects, skills, experience, certifications]) => {
+        setCounts({
+          projects: projects.length,
+          skills: skills.length,
+          experience: experience.length,
+          certifications: certifications.length,
+          featured: projects.filter((p) => p.featured).length,
+        });
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
 
 const stats = [
-  { value: "3+", label: "Projects Built" },
-  { value: "5+", label: "Technologies" },
-  { value: "1+", label: "Internships" },
-  { value: "2+", label: "Certifications" },
+  { value: counts.projects, label: "Projects Built" },
+  { value: counts.skills, label: "Skills" },
+  { value: counts.experience, label: "Internships" },
+  { value: counts.certifications, label: "Certifications" },
 ];
 
-export default function About() {
+// export default function About() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-100px" });
   const [settings, setSettings] = useState<PortfolioSettings>(DEFAULT_SETTINGS);
@@ -90,29 +126,31 @@ export default function About() {
                   )}
                 </div>
               </div>
+              <div className="flex gap-4">
+                <div className="flex flex-col items-center">
+                  <div className="w-3 h-3 rounded-full bg-purple-500 mt-1 flex-shrink-0" />
+                  <div className="w-0.5 flex-1 bg-gradient-to-b from-purple-500/50 to-transparent mt-1" />
+                </div>
+                <div className="pb-2">
+                  <p className="text-white font-semibold text-base">{settings.educationDegree1}</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <MapPin className="w-3.5 h-3.5 text-slate-500 flex-shrink-0" />
+                    <p className="text-slate-400 text-sm">{settings.educationSchool1}</p>
+                  </div>
+                  <div className="flex items-center gap-2 mt-1">
+                    <CalendarDays className="w-3.5 h-3.5 text-blue-400 flex-shrink-0" />
+                    <p className="text-blue-400 text-sm font-medium">{settings.educationDuration1}</p>
+                  </div>
+                  {settings.educationDescription && (
+                    <div className="flex items-start gap-2 mt-2">
+                      <BookOpen className="w-3.5 h-3.5 text-slate-500 flex-shrink-0 mt-0.5" />
+                      <p className="text-slate-500 text-sm">{settings.educationDescription1}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
 
-            {/* Current Interests */}
-            <div className="bg-[#1E293B] rounded-2xl p-6 border border-slate-700/50">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-green-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
-                  <Brain className="w-5 h-5 text-green-400" />
-                </div>
-                <h3 className="text-white font-semibold text-lg">Current Interests</h3>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {interests.length > 0 ? interests.map((item) => (
-                  <span
-                    key={item}
-                    className="px-3 py-1.5 rounded-lg text-sm font-medium bg-white/5 border border-white/10 text-slate-300 hover:border-blue-500/40 transition-colors cursor-default"
-                  >
-                    {item}
-                  </span>
-                )) : (
-                  <p className="text-slate-500 text-sm">No interests listed yet.</p>
-                )}
-              </div>
-            </div>
           </motion.div>
 
           {/* ── Right column ── */}
@@ -149,31 +187,26 @@ export default function About() {
               <p className="text-slate-300 leading-relaxed text-sm">{settings.whatDrivesMe}</p>
             </div>
 
-            {/* Currently Focused On */}
+            {/* Current Interests */}
             <div className="bg-[#1E293B] rounded-2xl p-6 border border-slate-700/50">
-              <h3 className="text-white font-semibold mb-5">Currently Focused On</h3>
-              {focusedOn.length > 0 ? (
-                <div className="space-y-4">
-                  {focusedOn.map((item) => (
-                    <div key={item.label}>
-                      <div className="flex justify-between text-sm mb-1.5">
-                        <span className="text-slate-300 font-medium">{item.label}</span>
-                        <span className="text-blue-400 font-semibold">{item.pct}%</span>
-                      </div>
-                      <div className="h-2 bg-slate-700/60 rounded-full overflow-hidden">
-                        <motion.div
-                          initial={{ width: 0 }}
-                          animate={inView ? { width: `${item.pct}%` } : {}}
-                          transition={{ duration: 1, delay: 0.6 }}
-                          className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"
-                        />
-                      </div>
-                    </div>
-                  ))}
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-green-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <Brain className="w-5 h-5 text-green-400" />
                 </div>
-              ) : (
-                <p className="text-slate-500 text-sm">No focus items set yet.</p>
-              )}
+                <h3 className="text-white font-semibold text-lg">Current Interests</h3>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {interests.length > 0 ? interests.map((item) => (
+                  <span
+                    key={item}
+                    className="px-3 py-1.5 rounded-lg text-sm font-medium bg-white/5 border border-white/10 text-slate-300 hover:border-blue-500/40 transition-colors cursor-default"
+                  >
+                    {item}
+                  </span>
+                )) : (
+                  <p className="text-slate-500 text-sm">No interests listed yet.</p>
+                )}
+              </div>
             </div>
           </motion.div>
         </div>

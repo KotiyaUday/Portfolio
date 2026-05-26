@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Github, Linkedin, Mail, Code2, Heart } from "lucide-react";
+import { Github, Linkedin, Mail, Code2 } from "lucide-react";
 import {
   getSettings,
   DEFAULT_SETTINGS,
@@ -91,9 +91,10 @@ export default function Footer() {
             © {new Date().getFullYear()} Uday Kotiya. All rights reserved.
           </p>
           <p className="text-slate-500 text-sm flex items-center gap-1">
-            Built with{" "}
-            <Heart className="w-3.5 h-3.5 text-red-500 fill-red-500" /> using
-            React & Firebase
+            Designed & Developed by Uday Kotiya
+          </p>
+          <p className="text-slate-500 text-sm flex items-center gap-1">
+            Built with using React & Firebase
           </p>
         </div>
       </div>
